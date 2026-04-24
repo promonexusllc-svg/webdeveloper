@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
+import { AdminRoute } from "./components/AdminRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PublicLayout } from "./components/PublicLayout";
@@ -53,8 +54,8 @@ function App() {
             </Route>
           </Route>
 
-          {/* Admin CRM — protected by admin check inside each page/query */}
-          <Route element={<ProtectedRoute />}>
+          {/* Admin CRM — only accessible by admin email */}
+          <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="clients" element={<AdminClients />} />

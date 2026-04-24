@@ -188,7 +188,7 @@ export function LandingPage() {
             WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.5) 80%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 75%, transparent 100%)",
             maskComposite: "intersect",
             WebkitMaskComposite: "source-in",
-            opacity: 0.7,
+            opacity: 0.85,
           }}
         />
 

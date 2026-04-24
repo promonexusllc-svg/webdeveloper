@@ -1,4 +1,4 @@
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { Navigate, Outlet } from "react-router-dom";
 import {
   Card,
@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
+import { api } from "../../convex/_generated/api";
 
 function AuthFormSkeleton() {
   return (
@@ -43,13 +44,22 @@ function AuthFormSkeleton() {
 
 export function PublicOnlyRoute() {
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const isAdmin = useQuery(
+    api.admin.isAdmin,
+    isAuthenticated ? undefined : "skip"
+  );
 
   if (isLoading) {
     return <AuthFormSkeleton />;
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    // Wait for admin check before redirecting
+    if (isAdmin === undefined) {
+      return <AuthFormSkeleton />;
+    }
+    // Admin → admin dashboard, regular user → client dashboard
+    return <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />;
   }
 
   return <Outlet />;
