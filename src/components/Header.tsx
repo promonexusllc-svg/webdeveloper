@@ -43,11 +43,7 @@ export function Header() {
             to="/"
             className="flex items-center gap-2.5 font-semibold text-lg hover:opacity-80 transition-opacity"
           >
-            <div className="size-9 rounded-lg bg-gradient-to-br from-[#00b4ff] to-[#0066cc] flex items-center justify-center glow-btn">
-              <span className="text-white font-bold text-sm tracking-tight">
-                PN
-              </span>
-            </div>
+            <img src="/logo.png" alt="PromoNexus" className="h-9 w-auto" />
             <span className="hidden sm:inline text-white">
               {APP_NAME}
               <span className="text-[#00b4ff] ml-0.5 font-light"> LLC</span>
@@ -76,14 +72,9 @@ export function Header() {
               </Button>
             ) : (
               !isAuthPage && (
-                <>
-                  <Button variant="ghost" size="sm" asChild className="text-[#94a3b8] hover:text-white hover:bg-white/5">
-                    <Link to="/login">Sign In</Link>
-                  </Button>
-                  <Button size="sm" asChild className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] glow-btn">
-                    <Link to="/signup">Client Portal</Link>
-                  </Button>
-                </>
+                <Button size="sm" asChild className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] glow-btn">
+                  <Link to="/login">Client Portal</Link>
+                </Button>
               )
             )}
           </nav>
@@ -121,14 +112,9 @@ export function Header() {
               </Button>
             ) : (
               !isAuthPage && (
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" asChild className="flex-1 text-[#94a3b8]">
-                    <Link to="/login" onClick={() => setMobileOpen(false)}>Sign In</Link>
-                  </Button>
-                  <Button size="sm" asChild className="flex-1 bg-[#00b4ff] text-[#020817]">
-                    <Link to="/signup" onClick={() => setMobileOpen(false)}>Client Portal</Link>
-                  </Button>
-                </div>
+                <Button size="sm" asChild className="w-full bg-[#00b4ff] text-[#020817]">
+                  <Link to="/login" onClick={() => setMobileOpen(false)}>Client Portal</Link>
+                </Button>
               )
             )}
           </div>

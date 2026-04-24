@@ -170,9 +170,7 @@ function SidebarHeaderContent() {
         onClick={() => setOpenMobile(false)}
         className="flex items-center gap-2.5 px-2 py-1 font-semibold text-lg"
       >
-        <div className="size-8 rounded-lg bg-gradient-to-br from-[#00b4ff] to-[#0066cc] flex items-center justify-center">
-          <span className="text-white font-bold text-xs">PN</span>
-        </div>
+        <img src="/logo.png" alt="PromoNexus" className="h-8 w-auto" />
         <span className="text-white">
           {APP_NAME}
           <span className="text-[#00b4ff] text-sm font-light ml-0.5">Portal</span>

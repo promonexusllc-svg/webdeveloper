@@ -27,52 +27,62 @@ const portfolioItems = [
     name: "Charity Swipes",
     type: "Community Platform",
     desc: "A community-driven platform connecting donors with causes through an innovative swipe interface.",
+    image: "/portfolio/charity-swipes.png",
     featured: true,
   },
   {
     name: "Boonies on the Bayou",
     type: "Restaurant",
     desc: "Slow-smoked barbecue, fresh Gulf seafood & Southern sides with waterfront dining in Bay St. Louis, MS.",
+    image: "/portfolio/boonies.png",
   },
   {
     name: "Butcher Block Steak House",
     type: "Restaurant",
     desc: "Premium hand-cut steaks, Gulf seafood & Southern comfort across four Mississippi Gulf Coast locations.",
+    image: "/portfolio/butcher-block.png",
   },
   {
     name: "Dan B. Murphy's",
     type: "Restaurant & Bar",
     desc: "A local favorite since 1981 — three floors of great food, cold drinks & stunning harbor views.",
+    image: "/portfolio/danbs.png",
   },
   {
     name: "Cosmos Café",
     type: "Breakfast & Lunch",
     desc: "Space-themed breakfast and lunch café at The Pearl Hotel — beignets, specialty coffee & more.",
+    image: "/portfolio/cosmos.png",
   },
   {
     name: "Hen House",
     type: "Cocktail & Wine Bar",
     desc: "Elevated cocktails, curated wines & artisan small bites in Bay St. Louis' Depot District.",
+    image: "/portfolio/hen-house.png",
   },
   {
     name: "Lemoine's Landing",
     type: "Tiki Bar",
     desc: "Waterfront tiki bar — open-air seating, tropical cocktails & stunning harbor views on Beach Blvd.",
+    image: "/portfolio/lemoines.png",
   },
   {
     name: "The Ugly Pirate",
     type: "Cafe & Bar",
     desc: "Mississippi's first pirate pub & café — legendary pizza, overstuffed gyros & 16 craft beers on tap.",
+    image: "/portfolio/ugly-pirate.png",
   },
   {
     name: "Wicked Pig Kitchen",
     type: "Restaurant & Bar",
     desc: "Southern-inspired bistro featuring sensational smoked meats, craft cocktails & much more.",
+    image: "/portfolio/wickedpig.png",
   },
   {
     name: "Rickey's on Coleman",
     type: "Seafood & Cajun",
     desc: "Waveland's beloved seafood & Cajun restaurant — Gulf Coast classics & a 25-year legacy reborn.",
+    image: "/portfolio/rickeys.png",
   },
 ];
 
@@ -290,21 +300,25 @@ export function LandingPage() {
             {portfolioItems.filter(p => p.featured).map((item) => (
               <div
                 key={item.name}
-                className="group p-8 rounded-xl glow-border bg-gradient-to-br from-[#0a1628] to-[#0a1628]/60 backdrop-blur-sm relative overflow-hidden"
+                className="group rounded-xl glow-border bg-gradient-to-br from-[#0a1628] to-[#0a1628]/60 backdrop-blur-sm relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#00b4ff] rounded-full opacity-[0.03] blur-[80px] group-hover:opacity-[0.06] transition-opacity" />
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
-                  <div className="size-16 rounded-xl bg-gradient-to-br from-[#00b4ff20] to-[#6366f120] border border-[#00b4ff20] flex items-center justify-center shrink-0">
-                    <Sparkles className="size-7 text-[#00b4ff]" />
+                <div className="relative z-10 flex flex-col lg:flex-row gap-0">
+                  <div className="lg:w-3/5 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-48 sm:h-64 lg:h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-700"
+                    />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold text-white">{item.name}</h3>
                       <span className="px-2.5 py-0.5 rounded-full bg-[#00b4ff15] text-[#00b4ff] text-xs font-medium border border-[#00b4ff20]">
-                        Featured Project
+                        Featured
                       </span>
                     </div>
-                    <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2">{item.type}</p>
+                    <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">{item.type}</p>
                     <p className="text-[#94a3b8] leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
@@ -317,23 +331,30 @@ export function LandingPage() {
             {portfolioItems.filter(p => !p.featured).map((item) => (
               <div
                 key={item.name}
-                className="group p-6 rounded-xl glow-border glow-border-hover bg-[#0a1628]/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
+                className="group rounded-xl glow-border glow-border-hover bg-[#0a1628]/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 overflow-hidden"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="size-10 rounded-lg bg-[#00b4ff08] border border-[#00b4ff15] flex items-center justify-center">
-                    <Globe className="size-4 text-[#00b4ff60]" />
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
+                  <div className="absolute top-3 right-3">
+                    <ExternalLink className="size-4 text-white/40 group-hover:text-[#00b4ff] transition-colors drop-shadow-lg" />
                   </div>
-                  <ExternalLink className="size-4 text-[#334155] group-hover:text-[#00b4ff] transition-colors" />
                 </div>
-                <h3 className="text-base font-semibold text-white mb-1">
-                  {item.name}
-                </h3>
-                <p className="text-xs text-[#00b4ff80] uppercase tracking-wider mb-2">
-                  {item.type}
-                </p>
-                <p className="text-sm text-[#94a3b8] leading-relaxed">
-                  {item.desc}
-                </p>
+                <div className="p-5">
+                  <h3 className="text-base font-semibold text-white mb-1">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-[#00b4ff80] uppercase tracking-wider mb-2">
+                    {item.type}
+                  </p>
+                  <p className="text-sm text-[#94a3b8] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -529,9 +550,7 @@ export function LandingPage() {
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="size-8 rounded-lg bg-gradient-to-br from-[#00b4ff] to-[#0066cc] flex items-center justify-center">
-                <span className="text-white font-bold text-xs">PN</span>
-              </div>
+              <img src="/logo.png" alt="PromoNexus" className="h-8 w-auto" />
               <span className="text-sm text-[#64748b]">
                 © {new Date().getFullYear()} PromoNexus LLC. All rights reserved.
               </span>
