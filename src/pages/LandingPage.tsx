@@ -177,27 +177,18 @@ export function LandingPage() {
         <div className="absolute top-1/4 -left-40 w-96 h-96 bg-[#00b4ff] rounded-full opacity-[0.04] blur-[120px]" />
         <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-[#6366f1] rounded-full opacity-[0.04] blur-[120px]" />
 
-        {/* Background hero image — blended seamlessly */}
+        {/* Background hero image — contained to right side, blended */}
         <div
-          className="absolute inset-0 hidden lg:block"
+          className="absolute inset-y-0 right-0 w-[55%] hidden lg:block"
           style={{
             backgroundImage: "url(/eric-hero.jpg)",
             backgroundSize: "cover",
-            backgroundPosition: "center right",
-            maskImage: "linear-gradient(to right, transparent 15%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.4) 90%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 15%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.4) 90%, transparent 100%)",
-          }}
-        />
-        {/* Bottom blend for hero image */}
-        <div
-          className="absolute inset-0 hidden lg:block"
-          style={{
-            backgroundImage: "url(/eric-hero.jpg)",
-            backgroundSize: "cover",
-            backgroundPosition: "center right",
-            maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 70%, transparent 95%)",
-            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 70%, transparent 95%)",
-            opacity: 0.5,
+            backgroundPosition: "center",
+            maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.5) 80%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 75%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.5) 80%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 75%, transparent 100%)",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+            opacity: 0.7,
           }}
         />
 
