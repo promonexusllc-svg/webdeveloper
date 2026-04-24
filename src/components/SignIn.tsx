@@ -186,13 +186,15 @@ export function SignIn() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label htmlFor="code">Reset Code</Label>
+              <Label htmlFor="reset-code">Reset Code</Label>
               <Input
-                id="code"
+                id="reset-code"
                 name="code"
                 type="text"
-                placeholder="Enter code"
-                autoComplete="one-time-code"
+                placeholder="Enter 6-digit code"
+                autoComplete="off"
+                autoFocus
+                defaultValue=""
                 className="h-11 text-center tracking-[0.5em] font-mono"
                 required
               />
