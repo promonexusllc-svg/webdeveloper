@@ -84,6 +84,12 @@ const portfolioItems = [
     desc: "Waveland's beloved seafood & Cajun restaurant — Gulf Coast classics & a 25-year legacy reborn.",
     image: "/portfolio/rickeys.jpg",
   },
+  {
+    name: "Sparkles Travel Group",
+    type: "Travel & Tourism",
+    desc: "Luxury travel agency — cruises, destination weddings, custom itineraries & all-inclusive getaways worldwide.",
+    image: "/portfolio/sparkles-travel.jpg",
+  },
 ];
 
 /* ─── Services Data ─── */
@@ -172,46 +178,63 @@ export function LandingPage() {
         <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-[#6366f1] rounded-full opacity-[0.04] blur-[120px]" />
 
         <div className="container relative z-10 py-20">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-6">
-              <Sparkles className="size-3" />
-              Web Development for Commercial Businesses
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Left: Text content */}
+            <div className="flex-1 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-6">
+                <Sparkles className="size-3" />
+                Web Development for Commercial Businesses
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+                <span className="text-white">We Build Websites</span>
+                <br />
+                <span className="text-white">That Drive </span>
+                <span className="text-[#00b4ff] glow-text">Revenue</span>
+              </h1>
+
+              <p className="text-lg text-[#94a3b8] max-w-xl mb-8 leading-relaxed">
+                PromoNexus LLC crafts high-performance, custom-coded websites for
+                restaurants, bars, retail, and commercial businesses. No templates.
+                No shortcuts. Just results.
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  size="lg"
+                  className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] font-semibold glow-btn"
+                  onClick={() =>
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Start Your Project
+                  <ArrowRight className="size-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-[#1e293b] text-[#94a3b8] hover:border-[#00b4ff40] hover:text-white hover:bg-white/5"
+                  onClick={() =>
+                    document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  View Our Work
+                </Button>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-              <span className="text-white">We Build Websites</span>
-              <br />
-              <span className="text-white">That Drive </span>
-              <span className="text-[#00b4ff] glow-text">Revenue</span>
-            </h1>
-
-            <p className="text-lg text-[#94a3b8] max-w-xl mb-8 leading-relaxed">
-              PromoNexus LLC crafts high-performance, custom-coded websites for
-              restaurants, bars, retail, and commercial businesses. No templates.
-              No shortcuts. Just results.
-            </p>
-
-            <div className="flex flex-wrap gap-3">
-              <Button
-                size="lg"
-                className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] font-semibold glow-btn"
-                onClick={() =>
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                Start Your Project
-                <ArrowRight className="size-4" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-[#1e293b] text-[#94a3b8] hover:border-[#00b4ff40] hover:text-white hover:bg-white/5"
-                onClick={() =>
-                  document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                View Our Work
-              </Button>
+            {/* Right: Eric's portrait */}
+            <div className="relative flex-shrink-0 hidden lg:block">
+              <div className="relative">
+                {/* Glow behind portrait */}
+                <div className="absolute inset-0 bg-[#00b4ff] rounded-full opacity-[0.08] blur-[60px] scale-75" />
+                <img
+                  src="/eric-portrait.jpg"
+                  alt="Eric T — Founder, PromoNexus LLC"
+                  className="relative z-10 w-[340px] xl:w-[400px] rounded-2xl object-cover shadow-2xl shadow-[#00b4ff10]"
+                  style={{ maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" }}
+                />
+              </div>
             </div>
           </div>
         </div>
