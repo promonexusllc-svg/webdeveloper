@@ -3,9 +3,7 @@
  *
  * These are internal actions called from mutations via ctx.scheduler.runAfter.
  */
-import { createAccount, retrieveAccount } from "@convex-dev/auth/server";
 import { v } from "convex/values";
-import { Scrypt } from "lucia";
 import { internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
 
@@ -64,60 +62,21 @@ function formatCurrency(cents: number): string {
 /* ═══════════════════ Client Onboarding ═══════════════════ */
 
 /**
- * Creates a portal user account for a new client and sends a welcome email.
- * The account is created with a random temporary password — the client
- * must use "Forgot password?" to set their own password.
+ * Sends a welcome email to a newly created client.
+ * The client uses the "Forgot password?" flow on the login page to set
+ * their password for the first time (their account is created when
+ * they complete the password-reset verification).
  */
 export const onboardClient = internalAction({
   args: {
-    clientDbId: v.string(), // The Convex _id of the client record
-    clientId: v.string(),   // PN-XXXX
+    clientDbId: v.string(),
+    clientId: v.string(),
     name: v.string(),
     email: v.string(),
   },
-  handler: async (ctx, { clientDbId, clientId, name, email }) => {
-    // Generate a random temporary password (client will never see this)
-    const tempPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 24);
-
-    // Check if account already exists
-    let userId: string | undefined;
-    try {
-      const existing = await retrieveAccount(ctx, {
-        provider: "password",
-        account: { id: email.toLowerCase() },
-      });
-      userId = existing.user._id as string;
-    } catch {
-      // Account doesn't exist — create it
-      const hashedPassword = await new Scrypt().hash(tempPassword);
-      const result = await createAccount(ctx, {
-        provider: "password",
-        account: {
-          id: email.toLowerCase(),
-          secret: hashedPassword,
-        },
-        profile: {
-          email: email.toLowerCase(),
-          name,
-          emailVerificationTime: Date.now(),
-        },
-        shouldLinkViaEmail: false,
-      });
-      userId = result.user._id as string;
-    }
-
-    // Link user to client record
-    if (userId) {
-      await ctx.runMutation(internal.clientActions.linkClientToUser, {
-        clientDbId,
-        userId,
-      });
-    }
-
-    // Determine the portal URL
+  handler: async (_ctx, { clientId, name, email }) => {
     const portalUrl = "https://promonexusllc.com/login";
 
-    // Send welcome email
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; background: #020817; color: #e2e8f0; border-radius: 12px; overflow: hidden;">
         <div style="background: linear-gradient(135deg, #0a1628, #0f2847); padding: 40px 30px; text-align: center; border-bottom: 1px solid #1e293b;">
@@ -142,7 +101,7 @@ export const onboardClient = internalAction({
             <li>Communicate with our team</li>
           </ul>
           <p style="color: #94a3b8; line-height: 1.6; margin: 20px 0 16px 0;">
-            To get started, please set your password by clicking the link below and using <strong style="color: #ffffff;">"Forgot password?"</strong> with your email:
+            To get started, visit the link below and click <strong style="color: #ffffff;">"Forgot password?"</strong> to set your password using your email on file.
           </p>
           <div style="text-align: center; margin: 24px 0;">
             <a href="${portalUrl}" style="display: inline-block; background: #00b4ff; color: #020817; text-decoration: none; font-weight: 600; padding: 14px 32px; border-radius: 8px; font-size: 16px;">
@@ -155,13 +114,27 @@ export const onboardClient = internalAction({
         </div>
         <div style="background: #0a1628; padding: 20px 30px; text-align: center; border-top: 1px solid #1e293b;">
           <p style="color: #475569; font-size: 12px; margin: 0;">
-            © ${new Date().getFullYear()} PromoNexus LLC — All rights reserved
+            &copy; ${new Date().getFullYear()} PromoNexus LLC &mdash; All rights reserved
           </p>
         </div>
       </div>
     `;
 
-    const textContent = `Welcome to PromoNexus LLC, ${name}!\n\nYour Client ID: ${clientId}\n\nYour client portal account has been created. You can:\n- View and download invoices\n- Track project progress\n- Submit support tickets\n- Communicate with our team\n\nTo get started, visit ${portalUrl} and click "Forgot password?" to set your password using your email: ${email}\n\n© ${new Date().getFullYear()} PromoNexus LLC`;
+    const textContent = [
+      `Welcome to PromoNexus LLC, ${name}!`,
+      ``,
+      `Your Client ID: ${clientId}`,
+      ``,
+      `Your client portal account has been created. You can:`,
+      `- View and download invoices`,
+      `- Track project progress`,
+      `- Submit support tickets`,
+      `- Communicate with our team`,
+      ``,
+      `To get started, visit ${portalUrl} and click "Forgot password?" to set your password using your email: ${email}`,
+      ``,
+      `© ${new Date().getFullYear()} PromoNexus LLC`,
+    ].join("\n");
 
     await sendCustomEmail({
       email,
@@ -181,9 +154,14 @@ export const linkClientToUser = internalMutation({
     userId: v.string(),
   },
   handler: async (ctx, { clientDbId, userId }) => {
-    const client = await ctx.db.get(clientDbId as any);
-    if (client) {
-      await ctx.db.patch(client._id, { userId: userId as any });
+    // Try to find the client doc by its _id
+    try {
+      const client = await ctx.db.get(clientDbId as any);
+      if (client) {
+        await ctx.db.patch(client._id, { userId: userId as any });
+      }
+    } catch {
+      // Silently ignore if the ID is invalid
     }
   },
 });
@@ -199,25 +177,21 @@ export const sendInvoiceEmail = internalAction({
     invoiceId: v.string(),
   },
   handler: async (ctx, { invoiceId }) => {
-    // Get invoice and client data
-    const invoice = await ctx.runQuery(internal.clientActions.getInvoiceData, {
+    const data = await ctx.runQuery(internal.clientActions.getInvoiceData, {
       invoiceId,
     });
-    if (!invoice) throw new Error("Invoice not found");
-    if (!invoice.client) throw new Error("Client not found for this invoice");
+    if (!data) throw new Error("Invoice not found");
+    if (!data.clientEmail) throw new Error("Client not found for this invoice");
 
-    const { client } = invoice;
-
-    // Build line items HTML
-    const lineItemsHtml = invoice.lineItems
+    const lineItemsHtml = data.lineItems
       .map(
-        (item: any) => `
+        (item: { description: string; quantity: number; unitPrice: number; total: number }) => `
       <tr style="border-bottom: 1px solid #1e293b;">
         <td style="padding: 12px 16px; color: #cbd5e1;">${item.description}</td>
         <td style="padding: 12px 16px; color: #94a3b8; text-align: center;">${item.quantity}</td>
         <td style="padding: 12px 16px; color: #94a3b8; text-align: right; font-family: monospace;">${formatCurrency(item.unitPrice)}</td>
         <td style="padding: 12px 16px; color: #ffffff; text-align: right; font-family: monospace;">${formatCurrency(item.total)}</td>
-      </tr>`
+      </tr>`,
       )
       .join("");
 
@@ -226,28 +200,26 @@ export const sendInvoiceEmail = internalAction({
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 650px; margin: 0 auto; background: #020817; color: #e2e8f0; border-radius: 12px; overflow: hidden;">
         <div style="background: linear-gradient(135deg, #0a1628, #0f2847); padding: 40px 30px; border-bottom: 1px solid #1e293b;">
-          <table style="width: 100%;">
-            <tr>
-              <td>
-                <h1 style="color: #00b4ff; font-size: 24px; margin: 0;">PromoNexus LLC</h1>
-                <p style="color: #64748b; font-size: 12px; margin: 4px 0 0 0;">Web Development for Commercial Businesses</p>
-              </td>
-              <td style="text-align: right;">
-                <div style="font-size: 28px; font-weight: bold; color: #ffffff; font-family: monospace;">${invoice.quoteNumber}</div>
-                <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Issued: ${invoice.issueDate}</div>
-                ${invoice.dueDate ? `<div style="color: #f59e0b; font-size: 12px;">Due: ${invoice.dueDate}</div>` : ""}
-              </td>
-            </tr>
-          </table>
+          <table style="width: 100%;"><tr>
+            <td>
+              <h1 style="color: #00b4ff; font-size: 24px; margin: 0;">PromoNexus LLC</h1>
+              <p style="color: #64748b; font-size: 12px; margin: 4px 0 0 0;">Web Development for Commercial Businesses</p>
+            </td>
+            <td style="text-align: right;">
+              <div style="font-size: 28px; font-weight: bold; color: #ffffff; font-family: monospace;">${data.quoteNumber}</div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Issued: ${data.issueDate}</div>
+              ${data.dueDate ? `<div style="color: #f59e0b; font-size: 12px;">Due: ${data.dueDate}</div>` : ""}
+            </td>
+          </tr></table>
         </div>
 
         <div style="padding: 30px;">
           <div style="margin-bottom: 24px;">
             <p style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0;">Bill To</p>
-            <p style="color: #ffffff; font-weight: 600; margin: 0;">${client.name}</p>
-            ${client.company ? `<p style="color: #94a3b8; margin: 2px 0;">${client.company}</p>` : ""}
-            <p style="color: #94a3b8; margin: 2px 0;">${client.email}</p>
-            <p style="color: #00b4ff; font-family: monospace; margin: 4px 0 0 0;">${client.clientId}</p>
+            <p style="color: #ffffff; font-weight: 600; margin: 0;">${data.clientName}</p>
+            ${data.clientCompany ? `<p style="color: #94a3b8; margin: 2px 0;">${data.clientCompany}</p>` : ""}
+            <p style="color: #94a3b8; margin: 2px 0;">${data.clientEmail}</p>
+            <p style="color: #00b4ff; font-family: monospace; margin: 4px 0 0 0;">${data.clientId}</p>
           </div>
 
           <table style="width: 100%; border-collapse: collapse; border: 1px solid #1e293b; border-radius: 8px; overflow: hidden;">
@@ -259,33 +231,31 @@ export const sendInvoiceEmail = internalAction({
                 <th style="padding: 12px 16px; color: #64748b; text-align: right; font-weight: 500; font-size: 13px;">Total</th>
               </tr>
             </thead>
-            <tbody>
-              ${lineItemsHtml}
-            </tbody>
+            <tbody>${lineItemsHtml}</tbody>
           </table>
 
           <div style="margin-top: 16px; margin-left: auto; width: 250px;">
             <table style="width: 100%;">
               <tr>
                 <td style="padding: 6px 0; color: #94a3b8; font-size: 14px;">Subtotal</td>
-                <td style="padding: 6px 0; color: #cbd5e1; text-align: right; font-family: monospace;">${formatCurrency(invoice.subtotal)}</td>
+                <td style="padding: 6px 0; color: #cbd5e1; text-align: right; font-family: monospace;">${formatCurrency(data.subtotal)}</td>
               </tr>
-              ${invoice.taxRate && invoice.taxAmount ? `
+              ${data.taxRate && data.taxAmount ? `
               <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 14px;">Tax (${invoice.taxRate}%)</td>
-                <td style="padding: 6px 0; color: #cbd5e1; text-align: right; font-family: monospace;">${formatCurrency(invoice.taxAmount)}</td>
+                <td style="padding: 6px 0; color: #94a3b8; font-size: 14px;">Tax (${data.taxRate}%)</td>
+                <td style="padding: 6px 0; color: #cbd5e1; text-align: right; font-family: monospace;">${formatCurrency(data.taxAmount)}</td>
               </tr>` : ""}
               <tr style="border-top: 1px solid #1e293b;">
                 <td style="padding: 12px 0 6px 0; color: #ffffff; font-size: 18px; font-weight: bold;">Total</td>
-                <td style="padding: 12px 0 6px 0; color: #00b4ff; text-align: right; font-family: monospace; font-size: 18px; font-weight: bold;">${formatCurrency(invoice.total)}</td>
+                <td style="padding: 12px 0 6px 0; color: #00b4ff; text-align: right; font-family: monospace; font-size: 18px; font-weight: bold;">${formatCurrency(data.total)}</td>
               </tr>
             </table>
           </div>
 
-          ${invoice.notes ? `
+          ${data.notes ? `
           <div style="background: #0a1628; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin-top: 24px;">
             <p style="color: #64748b; font-size: 12px; margin: 0 0 8px 0;">Notes</p>
-            <p style="color: #94a3b8; font-size: 14px; margin: 0; white-space: pre-wrap;">${invoice.notes}</p>
+            <p style="color: #94a3b8; font-size: 14px; margin: 0; white-space: pre-wrap;">${data.notes}</p>
           </div>` : ""}
 
           <div style="background: #0a1628; border: 1px solid #1e293b; border-radius: 8px; padding: 20px; margin-top: 24px;">
@@ -308,21 +278,53 @@ export const sendInvoiceEmail = internalAction({
 
         <div style="background: #0a1628; padding: 20px 30px; text-align: center; border-top: 1px solid #1e293b;">
           <p style="color: #475569; font-size: 12px; margin: 0;">
-            © ${new Date().getFullYear()} PromoNexus LLC — All rights reserved
+            &copy; ${new Date().getFullYear()} PromoNexus LLC &mdash; All rights reserved
           </p>
         </div>
       </div>
     `;
 
-    const lineItemsText = invoice.lineItems
-      .map((item: any) => `  ${item.description} — ${item.quantity} × ${formatCurrency(item.unitPrice)} = ${formatCurrency(item.total)}`)
+    const lineItemsText = data.lineItems
+      .map((item: { description: string; quantity: number; unitPrice: number; total: number }) =>
+        `  ${item.description} — ${item.quantity} × ${formatCurrency(item.unitPrice)} = ${formatCurrency(item.total)}`,
+      )
       .join("\n");
 
-    const textContent = `INVOICE ${invoice.quoteNumber}\n\nBill To: ${client.name} (${client.clientId})\n${client.company ? `Company: ${client.company}\n` : ""}Email: ${client.email}\n\nIssued: ${invoice.issueDate}${invoice.dueDate ? `\nDue: ${invoice.dueDate}` : ""}\n\nLine Items:\n${lineItemsText}\n\nSubtotal: ${formatCurrency(invoice.subtotal)}${invoice.taxRate ? `\nTax (${invoice.taxRate}%): ${formatCurrency(invoice.taxAmount ?? 0)}` : ""}\nTOTAL: ${formatCurrency(invoice.total)}\n${invoice.notes ? `\nNotes: ${invoice.notes}\n` : ""}\nPayment Methods:\n  CashApp: $promonexuswebdesign\n  PayPal: @EricTomchik\n  Venmo: @PromoNexusLLC\n  Zelle: (228) 344-5724\n  Apple Cash: (228) 344-5724\n\nView in your portal: ${portalUrl}\n\n© ${new Date().getFullYear()} PromoNexus LLC`;
+    const textContent = [
+      `INVOICE ${data.quoteNumber}`,
+      ``,
+      `Bill To: ${data.clientName} (${data.clientId})`,
+      data.clientCompany ? `Company: ${data.clientCompany}` : null,
+      `Email: ${data.clientEmail}`,
+      ``,
+      `Issued: ${data.issueDate}`,
+      data.dueDate ? `Due: ${data.dueDate}` : null,
+      ``,
+      `Line Items:`,
+      lineItemsText,
+      ``,
+      `Subtotal: ${formatCurrency(data.subtotal)}`,
+      data.taxRate ? `Tax (${data.taxRate}%): ${formatCurrency(data.taxAmount ?? 0)}` : null,
+      `TOTAL: ${formatCurrency(data.total)}`,
+      data.notes ? `\nNotes: ${data.notes}` : null,
+      ``,
+      `Payment Methods:`,
+      `  CashApp: $promonexuswebdesign`,
+      `  PayPal: @EricTomchik`,
+      `  Venmo: @PromoNexusLLC`,
+      `  Zelle: (228) 344-5724`,
+      `  Apple Cash: (228) 344-5724`,
+      ``,
+      `View in your portal: ${portalUrl}`,
+      ``,
+      `© ${new Date().getFullYear()} PromoNexus LLC`,
+    ]
+      .filter((l) => l !== null)
+      .join("\n");
 
     await sendCustomEmail({
-      email: client.email,
-      subject: `Invoice ${invoice.quoteNumber} — ${formatCurrency(invoice.total)} — PromoNexus LLC`,
+      email: data.clientEmail,
+      subject: `Invoice ${data.quoteNumber} — ${formatCurrency(data.total)} — PromoNexus LLC`,
       htmlContent,
       textContent,
     });
@@ -337,12 +339,28 @@ export const getInvoiceData = internalQuery({
   handler: async (ctx, { invoiceId }) => {
     const invoice = await ctx.db.get(invoiceId as any);
     if (!invoice) return null;
+
     // Find the client
     const clients = await ctx.db
       .query("clients")
-      .withIndex("by_clientId", (q: any) => q.eq("clientId", invoice.clientId))
+      .withIndex("by_clientId", (q) => q.eq("clientId", invoice.clientId))
       .collect();
     const client = clients[0] ?? null;
-    return { ...invoice, client };
+
+    return {
+      quoteNumber: invoice.quoteNumber,
+      issueDate: invoice.issueDate,
+      dueDate: invoice.dueDate ?? null,
+      notes: invoice.notes ?? null,
+      subtotal: invoice.subtotal,
+      taxRate: invoice.taxRate ?? null,
+      taxAmount: invoice.taxAmount ?? null,
+      total: invoice.total,
+      lineItems: invoice.lineItems,
+      clientId: invoice.clientId,
+      clientName: client?.name ?? "Client",
+      clientEmail: client?.email ?? null,
+      clientCompany: client?.company ?? null,
+    };
   },
 });
