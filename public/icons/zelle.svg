@@ -1,4 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <circle cx="24" cy="24" r="24" fill="#6C1CD3"/>
-  <path d="M14 15h20v3.5H19.5L34 33v3H14v-3.5h14.5L14 18.5V15z" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <!-- Stylized Z with dollar lines -->
+  <g transform="translate(10, 8)">
+    <!-- The Z character with horizontal lines through it -->
+    <path d="M8 12h36v8H18.5L44 56H8v8h36v-8h25.5L44 20h0z" fill="#6C1CD3"/>
+    <!-- Cleaner Zelle Z mark -->
+    <text x="0" y="60" font-family="Arial Black, Impact, Arial, sans-serif" font-size="68" font-weight="900" fill="#6C1CD3" letter-spacing="-2">Z</text>
+    <!-- Horizontal lines through the Z -->
+    <line x1="2" y1="22" x2="42" y2="22" stroke="#6C1CD3" stroke-width="4"/>
+    <line x1="2" y1="54" x2="42" y2="54" stroke="#6C1CD3" stroke-width="4"/>
+  </g>
+  <!-- "elle" text -->
+  <text x="52" y="60" font-family="Arial Black, Impact, Arial, sans-serif" font-size="58" font-weight="900" fill="#6C1CD3" letter-spacing="-1">elle</text>
 </svg>

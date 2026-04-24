@@ -583,11 +583,11 @@ export function LandingPage() {
                 <span className="text-white font-medium">@PromoNexusLLC</span>
               </span>
               <span className="flex items-center gap-2.5">
-                <img src="/icons/zelle.svg" alt="Zelle" className="h-6 w-6 rounded" />
+                <img src="/icons/zelle.png" alt="Zelle" className="h-6 w-auto" />
                 <span className="text-white font-medium">(228) 344-5724</span>
               </span>
               <span className="flex items-center gap-2.5">
-                <img src="/icons/applecash.svg" alt="Apple Cash" className="h-6 w-6 rounded" />
+                <img src="/icons/applecash.png" alt="Apple Cash" className="h-6 w-auto rounded" />
                 <span className="text-white font-medium">(228) 344-5724</span>
               </span>
             </div>
