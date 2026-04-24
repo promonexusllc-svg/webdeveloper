@@ -2,7 +2,7 @@ import { useMutation } from "convex/react";
 import {
   ArrowRight,
   Code2,
-  ExternalLink,
+
   Globe,
   HeadphonesIcon,
   Layers,
@@ -361,9 +361,7 @@ export function LandingPage() {
                     className="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
-                  <div className="absolute top-3 right-3">
-                    <ExternalLink className="size-4 text-white/40 group-hover:text-[#00b4ff] transition-colors drop-shadow-lg" />
-                  </div>
+
                 </div>
                 <div className="p-5">
                   <h3 className="text-base font-semibold text-white mb-1">
