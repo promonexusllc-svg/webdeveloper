@@ -602,7 +602,7 @@ export const sendInvoice = mutation({
 
     // Schedule email delivery
     await ctx.scheduler.runAfter(0, internal.clientActions.sendInvoiceEmail, {
-      invoiceId: id as string,
+      invoiceId: id,
     });
 
     return { success: true };

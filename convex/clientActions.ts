@@ -174,7 +174,7 @@ export const linkClientToUser = internalMutation({
  */
 export const sendInvoiceEmail = internalAction({
   args: {
-    invoiceId: v.string(),
+    invoiceId: v.id("invoices"),
   },
   handler: async (ctx, { invoiceId }) => {
     const data = await ctx.runQuery(internal.clientActions.getInvoiceData, {
@@ -335,9 +335,9 @@ export const sendInvoiceEmail = internalAction({
 
 /** Internal query to fetch invoice + client data for email rendering */
 export const getInvoiceData = internalQuery({
-  args: { invoiceId: v.string() },
+  args: { invoiceId: v.id("invoices") },
   handler: async (ctx, { invoiceId }) => {
-    const invoice = await ctx.db.get(invoiceId as any);
+    const invoice = await ctx.db.get(invoiceId);
     if (!invoice) return null;
 
     // Find the client
