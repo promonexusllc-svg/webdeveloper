@@ -10,14 +10,16 @@ import {
   DashboardPage,
   LandingPage,
   LoginPage,
+  NewTicketPage,
   SettingsPage,
   SignupPage,
+  TicketDetailPage,
 } from "./pages";
 
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="system" switchable>
+      <ThemeProvider defaultTheme="dark" switchable={false}>
         <Toaster />
         <Routes>
           <Route element={<PublicLayout />}>
@@ -31,6 +33,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/tickets/new" element={<NewTicketPage />} />
+              <Route path="/tickets/:ticketId" element={<TicketDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>

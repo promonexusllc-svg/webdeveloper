@@ -1,190 +1,550 @@
-import { useConvexAuth } from "convex/react";
+import { useMutation } from "convex/react";
 import {
   ArrowRight,
-  Check,
+  Code2,
+  ExternalLink,
+  Globe,
+  HeadphonesIcon,
   Layers,
+  Palette,
+  Rocket,
+  Search,
+  Server,
   Shield,
   Sparkles,
-  Star,
-  Zap,
 } from "lucide-react";
+import { type FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { api } from "../../convex/_generated/api";
+
+/* ─── Portfolio Data ─── */
+const portfolioItems = [
+  {
+    name: "Charity Swipes",
+    type: "Community Platform",
+    desc: "A community-driven platform connecting donors with causes through an innovative swipe interface.",
+    featured: true,
+  },
+  {
+    name: "Boonies on the Bayou",
+    type: "Restaurant",
+    desc: "Slow-smoked barbecue, fresh Gulf seafood & Southern sides with waterfront dining in Bay St. Louis, MS.",
+  },
+  {
+    name: "Butcher Block Steak House",
+    type: "Restaurant",
+    desc: "Premium hand-cut steaks, Gulf seafood & Southern comfort across four Mississippi Gulf Coast locations.",
+  },
+  {
+    name: "Dan B. Murphy's",
+    type: "Restaurant & Bar",
+    desc: "A local favorite since 1981 — three floors of great food, cold drinks & stunning harbor views.",
+  },
+  {
+    name: "Cosmos Café",
+    type: "Breakfast & Lunch",
+    desc: "Space-themed breakfast and lunch café at The Pearl Hotel — beignets, specialty coffee & more.",
+  },
+  {
+    name: "Hen House",
+    type: "Cocktail & Wine Bar",
+    desc: "Elevated cocktails, curated wines & artisan small bites in Bay St. Louis' Depot District.",
+  },
+  {
+    name: "Lemoine's Landing",
+    type: "Tiki Bar",
+    desc: "Waterfront tiki bar — open-air seating, tropical cocktails & stunning harbor views on Beach Blvd.",
+  },
+  {
+    name: "The Ugly Pirate",
+    type: "Cafe & Bar",
+    desc: "Mississippi's first pirate pub & café — legendary pizza, overstuffed gyros & 16 craft beers on tap.",
+  },
+  {
+    name: "Wicked Pig Kitchen",
+    type: "Restaurant & Bar",
+    desc: "Southern-inspired bistro featuring sensational smoked meats, craft cocktails & much more.",
+  },
+  {
+    name: "Rickey's on Coleman",
+    type: "Seafood & Cajun",
+    desc: "Waveland's beloved seafood & Cajun restaurant — Gulf Coast classics & a 25-year legacy reborn.",
+  },
+];
+
+/* ─── Services Data ─── */
+const services = [
+  {
+    icon: Code2,
+    title: "Custom Web Development",
+    desc: "Hand-coded, performance-optimized websites built from scratch. No templates, no bloat — just clean, fast code tailored to your brand.",
+  },
+  {
+    icon: Palette,
+    title: "UI/UX Design",
+    desc: "Modern, conversion-focused designs that captivate visitors and drive action. Every pixel placed with purpose.",
+  },
+  {
+    icon: Server,
+    title: "Serverless Backends",
+    desc: "Real-time databases, authentication, and API integrations powered by cutting-edge serverless architecture. Scalable from day one.",
+  },
+  {
+    icon: Globe,
+    title: "Domain & Hosting",
+    desc: "Full deployment management — domain configuration, SSL certificates, CDN setup, and ongoing hosting optimization.",
+  },
+  {
+    icon: Search,
+    title: "SEO Optimization",
+    desc: "Technical SEO, meta optimization, and performance tuning to ensure your site ranks and converts.",
+  },
+  {
+    icon: HeadphonesIcon,
+    title: "Ongoing Support",
+    desc: "Dedicated client portal with ticket system for quick updates, bug fixes, and continuous improvements.",
+  },
+];
+
+/* ─── Stats ─── */
+const stats = [
+  { value: "10+", label: "Projects Delivered" },
+  { value: "100%", label: "Client Satisfaction" },
+  { value: "< 2s", label: "Avg. Load Time" },
+  { value: "24/7", label: "Client Support" },
+];
 
 export function LandingPage() {
-  const { isAuthenticated, isLoading } = useConvexAuth();
+  const submitContact = useMutation(api.contacts.submit);
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    message: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleContactSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!formState.name || !formState.email || !formState.message) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitContact({
+        name: formState.name,
+        email: formState.email,
+        company: formState.company || undefined,
+        phone: formState.phone || undefined,
+        message: formState.message,
+      });
+      toast.success("Message sent! We'll be in touch soon.");
+      setFormState({ name: "", email: "", company: "", phone: "", message: "" });
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <section className="relative flex-1 flex flex-col items-center justify-center px-4 py-16 md:py-24">
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40" />
-        </div>
+    <div className="relative">
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden grid-bg">
+        {/* Ambient glow orbs */}
+        <div className="absolute top-1/4 -left-40 w-96 h-96 bg-[#00b4ff] rounded-full opacity-[0.04] blur-[120px]" />
+        <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-[#6366f1] rounded-full opacity-[0.04] blur-[120px]" />
 
-        <div className="max-w-5xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-background text-xs font-medium">
-            <Star className="size-3 fill-chart-4 text-chart-4" />
-            Badge Text Goes Here
-          </div>
+        <div className="container relative z-10 py-20">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-6">
+              <Sparkles className="size-3" />
+              Web Development for Commercial Businesses
+            </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
-            This is the
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60">
-              Main Headline
-            </span>
-          </h1>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+              <span className="text-white">We Build Websites</span>
+              <br />
+              <span className="text-white">That Drive </span>
+              <span className="text-[#00b4ff] glow-text">Revenue</span>
+            </h1>
 
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            This is the subheadline that explains what the product does and why
-            it matters. Keep it concise and compelling.
-          </p>
+            <p className="text-lg text-[#94a3b8] max-w-xl mb-8 leading-relaxed">
+              PromoNexus LLC crafts high-performance, custom-coded websites for
+              restaurants, bars, retail, and commercial businesses. No templates.
+              No shortcuts. Just results.
+            </p>
 
-          {!isAuthenticated && !isLoading && (
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Button size="lg" className="text-base h-11 px-6" asChild>
-                <Link to="/signup">
-                  Get Started
-                  <ArrowRight className="size-4" />
-                </Link>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                size="lg"
+                className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] font-semibold glow-btn"
+                onClick={() =>
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Start Your Project
+                <ArrowRight className="size-4" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base h-11 px-6"
-                asChild
+                className="border-[#1e293b] text-[#94a3b8] hover:border-[#00b4ff40] hover:text-white hover:bg-white/5"
+                onClick={() =>
+                  document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
+                }
               >
-                <Link to="/login">Sign In</Link>
+                View Our Work
               </Button>
             </div>
-          )}
-          {isAuthenticated && (
-            <div className="pt-2">
-              <Button size="lg" className="text-base h-11 px-6" asChild>
-                <Link to="/dashboard">
-                  Go to Dashboard
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-            </div>
-          )}
+          </div>
+        </div>
 
-          <div className="flex items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Check className="size-4 text-chart-1" />
-              <span>Benefit one</span>
+        {/* Bottom fade line */}
+        <div className="absolute bottom-0 left-0 right-0 neon-line" />
+      </section>
+
+      {/* ═══ STATS BAR ═══ */}
+      <section className="border-y border-[#1e293b] bg-[#050d1a]">
+        <div className="container py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-[#00b4ff] glow-text mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm text-[#64748b] uppercase tracking-wider">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SERVICES ═══ */}
+      <section id="services" className="py-24 relative">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#00b4ff] rounded-full opacity-[0.02] blur-[100px]" />
+        <div className="container relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
+              <Layers className="size-3" />
+              What We Do
             </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="size-4 text-chart-1" />
-              <span>Benefit two</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              Full-Stack Web Solutions
+            </h2>
+            <p className="text-[#94a3b8] max-w-2xl mx-auto">
+              From concept to deployment, we handle every layer of your digital presence.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {services.map((svc) => (
+              <div
+                key={svc.title}
+                className="group p-6 rounded-xl glow-border glow-border-hover bg-[#0a1628]/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
+              >
+                <div className="size-11 rounded-lg bg-[#00b4ff10] border border-[#00b4ff20] flex items-center justify-center mb-4 group-hover:bg-[#00b4ff15] transition-colors">
+                  <svc.icon className="size-5 text-[#00b4ff]" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {svc.title}
+                </h3>
+                <p className="text-sm text-[#94a3b8] leading-relaxed">
+                  {svc.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="neon-line" />
+
+      {/* ═══ PORTFOLIO ═══ */}
+      <section id="portfolio" className="py-24 relative bg-[#050d1a]/50">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#6366f1] rounded-full opacity-[0.02] blur-[150px]" />
+        <div className="container relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
+              <Rocket className="size-3" />
+              Our Work
             </div>
-            <div className="hidden sm:flex items-center gap-1.5">
-              <Check className="size-4 text-chart-1" />
-              <span>Benefit three</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              Projects We've Delivered
+            </h2>
+            <p className="text-[#94a3b8] max-w-2xl mx-auto">
+              From local restaurants to community platforms — every project gets our full attention and expertise.
+            </p>
+          </div>
+
+          {/* Featured project */}
+          <div className="mb-8">
+            {portfolioItems.filter(p => p.featured).map((item) => (
+              <div
+                key={item.name}
+                className="group p-8 rounded-xl glow-border bg-gradient-to-br from-[#0a1628] to-[#0a1628]/60 backdrop-blur-sm relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00b4ff] rounded-full opacity-[0.03] blur-[80px] group-hover:opacity-[0.06] transition-opacity" />
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
+                  <div className="size-16 rounded-xl bg-gradient-to-br from-[#00b4ff20] to-[#6366f120] border border-[#00b4ff20] flex items-center justify-center shrink-0">
+                    <Sparkles className="size-7 text-[#00b4ff]" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-white">{item.name}</h3>
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#00b4ff15] text-[#00b4ff] text-xs font-medium border border-[#00b4ff20]">
+                        Featured Project
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2">{item.type}</p>
+                    <p className="text-[#94a3b8] leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Portfolio grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {portfolioItems.filter(p => !p.featured).map((item) => (
+              <div
+                key={item.name}
+                className="group p-6 rounded-xl glow-border glow-border-hover bg-[#0a1628]/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="size-10 rounded-lg bg-[#00b4ff08] border border-[#00b4ff15] flex items-center justify-center">
+                    <Globe className="size-4 text-[#00b4ff60]" />
+                  </div>
+                  <ExternalLink className="size-4 text-[#334155] group-hover:text-[#00b4ff] transition-colors" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">
+                  {item.name}
+                </h3>
+                <p className="text-xs text-[#00b4ff80] uppercase tracking-wider mb-2">
+                  {item.type}
+                </p>
+                <p className="text-sm text-[#94a3b8] leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="neon-line" />
+
+      {/* ═══ WHY US ═══ */}
+      <section className="py-24 relative">
+        <div className="container relative z-10">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
+                <Shield className="size-3" />
+                Why PromoNexus
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+                Built Different. <span className="text-[#00b4ff]">Built Better.</span>
+              </h2>
+              <p className="text-[#94a3b8] leading-relaxed mb-8">
+                We don't use WordPress themes or drag-and-drop builders. Every line of code is written by hand, optimized for speed, and designed to convert visitors into customers.
+              </p>
+              <div className="space-y-4">
+                {[
+                  "Hand-coded — no bloated page builders",
+                  "Mobile-first responsive design",
+                  "Real-time serverless backends",
+                  "Dedicated support portal for every client",
+                  "SEO-optimized from the ground up",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <div className="size-6 rounded-full bg-[#00b4ff15] border border-[#00b4ff30] flex items-center justify-center shrink-0">
+                      <div className="size-1.5 rounded-full bg-[#00b4ff]" />
+                    </div>
+                    <span className="text-sm text-[#cbd5e1]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tech stack visual */}
+            <div className="p-8 rounded-xl glow-border bg-[#0a1628]/40 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider mb-6">Our Technology Stack</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { name: "HTML5 / CSS3", sub: "Semantic & accessible" },
+                  { name: "JavaScript", sub: "Vanilla & frameworks" },
+                  { name: "React", sub: "Component architecture" },
+                  { name: "Convex", sub: "Serverless backend" },
+                  { name: "Tailwind CSS", sub: "Utility-first styling" },
+                  { name: "Vercel", sub: "Edge deployment" },
+                ].map((tech) => (
+                  <div
+                    key={tech.name}
+                    className="p-3 rounded-lg bg-[#111d33]/60 border border-[#1e293b] hover:border-[#00b4ff20] transition-colors"
+                  >
+                    <div className="text-sm font-medium text-white">{tech.name}</div>
+                    <div className="text-xs text-[#64748b]">{tech.sub}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20 md:py-32 border-t bg-muted/30">
-        <div className="container">
-          <div className="text-center mb-16">
-            <p className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
-              Features
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Features Section Title
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-              A brief description of what makes this product special and why
-              users should care about these features.
-            </p>
-          </div>
+      <div className="neon-line" />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-muted/50 border p-6 md:p-8 transition-all hover:shadow-lg hover:border-foreground/20">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 size-24 rounded-full bg-chart-1/10 blur-2xl transition-all group-hover:bg-chart-1/20" />
-              <div className="relative">
-                <div className="inline-flex size-11 items-center justify-center rounded-xl bg-chart-1/10 mb-5">
-                  <Zap className="size-5 text-chart-1" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Feature One</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Here we describe the first key feature. It solves a specific
-                  problem for users.
-                </p>
+      {/* ═══ CONTACT ═══ */}
+      <section id="contact" className="py-24 relative bg-[#050d1a]/50">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#00b4ff] rounded-full opacity-[0.02] blur-[150px]" />
+        <div className="container relative z-10">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
+                <Sparkles className="size-3" />
+                Get In Touch
               </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                Ready to Elevate Your Business?
+              </h2>
+              <p className="text-[#94a3b8]">
+                Tell us about your project. We'll get back to you within 24 hours.
+              </p>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-muted/50 border p-6 md:p-8 transition-all hover:shadow-lg hover:border-foreground/20">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 size-24 rounded-full bg-chart-2/10 blur-2xl transition-all group-hover:bg-chart-2/20" />
-              <div className="relative">
-                <div className="inline-flex size-11 items-center justify-center rounded-xl bg-chart-2/10 mb-5">
-                  <Shield className="size-5 text-chart-2" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Feature Two</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  This is where we explain the second feature. It complements
-                  the first one.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-muted/50 border p-6 md:p-8 transition-all hover:shadow-lg hover:border-foreground/20">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 size-24 rounded-full bg-chart-3/10 blur-2xl transition-all group-hover:bg-chart-3/20" />
-              <div className="relative">
-                <div className="inline-flex size-11 items-center justify-center rounded-xl bg-chart-3/10 mb-5">
-                  <Sparkles className="size-5 text-chart-3" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Feature Three</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  The third feature rounds out the offering. Together they
-                  create a solution.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-muted/50 border p-6 md:p-8 md:col-span-2 lg:col-span-2 transition-all hover:shadow-lg hover:border-foreground/20">
-              <div className="absolute bottom-0 left-0 -mb-8 -ml-8 size-32 rounded-full bg-chart-4/10 blur-2xl transition-all group-hover:bg-chart-4/20" />
-              <div className="relative flex flex-col md:flex-row md:items-center gap-6">
-                <div className="inline-flex size-14 shrink-0 items-center justify-center rounded-2xl bg-chart-4/10">
-                  <Layers className="size-7 text-chart-4" />
+            <form
+              onSubmit={handleContactSubmit}
+              className="p-8 rounded-xl glow-border bg-[#0a1628]/60 backdrop-blur-sm space-y-5"
+            >
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-[#94a3b8] mb-1.5">
+                    Full Name <span className="text-[#00b4ff]">*</span>
+                  </label>
+                  <Input
+                    placeholder="John Smith"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    className="bg-[#111d33] border-[#1e293b] text-white placeholder:text-[#475569] focus:border-[#00b4ff] focus:ring-[#00b4ff40]"
+                  />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    Feature Four - A Bigger Highlight
-                  </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    This larger card can highlight a key differentiator or main
-                    value proposition. Use this space to elaborate on what makes
-                    your product stand out.
-                  </p>
+                  <label className="block text-xs font-medium text-[#94a3b8] mb-1.5">
+                    Email <span className="text-[#00b4ff]">*</span>
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="john@company.com"
+                    value={formState.email}
+                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                    className="bg-[#111d33] border-[#1e293b] text-white placeholder:text-[#475569] focus:border-[#00b4ff] focus:ring-[#00b4ff40]"
+                  />
                 </div>
               </div>
-            </div>
-
-            <div className="group relative overflow-hidden rounded-2xl bg-primary text-primary-foreground p-6 md:p-8 transition-all hover:shadow-lg">
-              <div className="relative">
-                <h3 className="font-semibold text-lg mb-2">Ready to start?</h3>
-                <p className="text-primary-foreground/80 text-sm leading-relaxed mb-4">
-                  Join thousands of users already using our platform.
-                </p>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="bg-background text-foreground hover:bg-background/90"
-                  asChild
-                >
-                  <Link to="/signup">
-                    Get Started
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-[#94a3b8] mb-1.5">
+                    Company
+                  </label>
+                  <Input
+                    placeholder="Your Company"
+                    value={formState.company}
+                    onChange={(e) => setFormState({ ...formState, company: e.target.value })}
+                    className="bg-[#111d33] border-[#1e293b] text-white placeholder:text-[#475569] focus:border-[#00b4ff] focus:ring-[#00b4ff40]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#94a3b8] mb-1.5">
+                    Phone
+                  </label>
+                  <Input
+                    type="tel"
+                    placeholder="(555) 123-4567"
+                    value={formState.phone}
+                    onChange={(e) => setFormState({ ...formState, phone: e.target.value })}
+                    className="bg-[#111d33] border-[#1e293b] text-white placeholder:text-[#475569] focus:border-[#00b4ff] focus:ring-[#00b4ff40]"
+                  />
+                </div>
               </div>
-            </div>
+              <div>
+                <label className="block text-xs font-medium text-[#94a3b8] mb-1.5">
+                  Project Details <span className="text-[#00b4ff]">*</span>
+                </label>
+                <Textarea
+                  rows={5}
+                  placeholder="Tell us about your project — what do you need built, your timeline, and any specific features..."
+                  value={formState.message}
+                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                  className="bg-[#111d33] border-[#1e293b] text-white placeholder:text-[#475569] focus:border-[#00b4ff] focus:ring-[#00b4ff40] resize-none"
+                />
+              </div>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={submitting}
+                className="w-full bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] font-semibold glow-btn"
+              >
+                {submitting ? "Sending..." : "Send Message"}
+                <ArrowRight className="size-4" />
+              </Button>
+            </form>
           </div>
         </div>
       </section>
+
+      {/* ═══ CTA BANNER ═══ */}
+      <section className="py-16 border-t border-[#1e293b] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00b4ff08] via-transparent to-[#6366f108]" />
+        <div className="container relative z-10 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+            Already a Client?
+          </h2>
+          <p className="text-[#94a3b8] mb-6 max-w-md mx-auto">
+            Access your support portal to submit tickets, track progress, and get help with your projects.
+          </p>
+          <Button
+            size="lg"
+            asChild
+            className="bg-[#00b4ff] text-[#020817] hover:bg-[#0099dd] font-semibold glow-btn"
+          >
+            <Link to="/login">
+              Access Client Portal
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer className="border-t border-[#1e293b] py-10 bg-[#020817]">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="size-8 rounded-lg bg-gradient-to-br from-[#00b4ff] to-[#0066cc] flex items-center justify-center">
+                <span className="text-white font-bold text-xs">PN</span>
+              </div>
+              <span className="text-sm text-[#64748b]">
+                © {new Date().getFullYear()} PromoNexus LLC. All rights reserved.
+              </span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-[#475569]">
+              <button type="button" onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-[#00b4ff] transition-colors">Services</button>
+              <button type="button" onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-[#00b4ff] transition-colors">Portfolio</button>
+              <button type="button" onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-[#00b4ff] transition-colors">Contact</button>
+              <Link to="/login" className="hover:text-[#00b4ff] transition-colors">Client Portal</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
