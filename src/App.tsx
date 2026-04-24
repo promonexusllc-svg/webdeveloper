@@ -16,6 +16,19 @@ import {
   TicketDetailPage,
 } from "./pages";
 
+/* Admin pages */
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminClients from "./pages/admin/AdminClients";
+import AdminNewClient from "./pages/admin/AdminNewClient";
+import AdminClientDetail from "./pages/admin/AdminClientDetail";
+import AdminProjects from "./pages/admin/AdminProjects";
+import AdminInvoices from "./pages/admin/AdminInvoices";
+import AdminNewInvoice from "./pages/admin/AdminNewInvoice";
+import AdminInvoiceDetail from "./pages/admin/AdminInvoiceDetail";
+import AdminMessages from "./pages/admin/AdminMessages";
+import AdminTickets from "./pages/admin/AdminTickets";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -30,12 +43,29 @@ function App() {
             </Route>
           </Route>
 
+          {/* Client Portal */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/tickets/new" element={<NewTicketPage />} />
               <Route path="/tickets/:ticketId" element={<TicketDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+            </Route>
+          </Route>
+
+          {/* Admin CRM — protected by admin check inside each page/query */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="clients" element={<AdminClients />} />
+              <Route path="clients/new" element={<AdminNewClient />} />
+              <Route path="clients/:clientId" element={<AdminClientDetail />} />
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="invoices" element={<AdminInvoices />} />
+              <Route path="invoices/new" element={<AdminNewInvoice />} />
+              <Route path="invoices/:invoiceId" element={<AdminInvoiceDetail />} />
+              <Route path="messages" element={<AdminMessages />} />
+              <Route path="tickets" element={<AdminTickets />} />
             </Route>
           </Route>
 
