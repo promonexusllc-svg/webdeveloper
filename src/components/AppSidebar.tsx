@@ -1,6 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import {
+  FileText,
   Globe,
   LayoutDashboard,
   LogOut,
@@ -34,6 +35,7 @@ import {
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/invoices", label: "Invoices", icon: FileText },
   { href: "/tickets/new", label: "New Ticket", icon: Plus },
 ];
 

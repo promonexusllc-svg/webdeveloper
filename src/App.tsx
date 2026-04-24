@@ -16,6 +16,8 @@ import {
 
   TicketDetailPage,
 } from "./pages";
+import { ClientInvoicesPage } from "./pages/ClientInvoicesPage";
+import { ClientInvoiceDetailPage } from "./pages/ClientInvoiceDetailPage";
 
 /* Admin pages */
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -48,6 +50,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/invoices" element={<ClientInvoicesPage />} />
+              <Route path="/invoices/:invoiceId" element={<ClientInvoiceDetailPage />} />
               <Route path="/tickets/new" element={<NewTicketPage />} />
               <Route path="/tickets/:ticketId" element={<TicketDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />

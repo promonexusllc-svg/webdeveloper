@@ -229,10 +229,66 @@
 }
 
 .glass {
-  background: rgba(10, 22, 40, 0.6);
+  background: rgba(10, 22, 40, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(0, 180, 255, 0.1);
+}
+
+/* Mobile: disable heavy blur & glow orb compositing to prevent scroll jank */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(10, 22, 40, 0.92);
+  }
+
+  /* Prevent horizontal overflow on mobile */
+  html, body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Kill glow orbs on mobile to prevent floating/jank */
+  .glow-orb-mobile-hide {
+    display: none !important;
+  }
+
+  /* Make grid background simpler on mobile */
+  .grid-bg {
+    background-size: 40px 40px;
+  }
+
+  /* Prevent transform-induced stacking context issues */
+  .glow-border {
+    box-shadow: none;
+    border: 1px solid rgba(0, 180, 255, 0.15);
+  }
+  .glow-border-hover:hover {
+    box-shadow: none;
+    border-color: rgba(0, 180, 255, 0.3);
+  }
+
+  /* Simpler glow button on mobile */
+  .glow-btn {
+    box-shadow: 0 0 10px rgba(0, 180, 255, 0.2);
+  }
+  .glow-btn:hover {
+    box-shadow: 0 0 15px rgba(0, 180, 255, 0.3);
+  }
+
+  /* Disable per-card backdrop blur to prevent scroll jank
+     (the glass class on the header keeps its lighter blur above) */
+  .backdrop-blur-sm {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Fix sections with relative + overflow that cause repaints */
+  section {
+    will-change: auto;
+    transform: translateZ(0);
+  }
 }
 
 .grid-bg {

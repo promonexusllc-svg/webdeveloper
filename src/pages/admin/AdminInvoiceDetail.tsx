@@ -32,6 +32,7 @@ export default function AdminInvoiceDetail() {
     invoice ? { clientId: invoice.clientId } : "skip"
   );
   const updateStatus = useMutation(api.admin.updateInvoiceStatus);
+  const sendToClient = useMutation(api.admin.sendInvoice);
 
   if (!invoice) {
     return (
@@ -179,11 +180,18 @@ export default function AdminInvoiceDetail() {
         <div className="flex flex-wrap gap-3">
           {invoice.status === "draft" && (
             <Button
-              onClick={() => markAs("sent")}
+              onClick={async () => {
+                try {
+                  await sendToClient({ id: invoice!._id });
+                  toast.success("Invoice sent to client! Email will be delivered shortly.");
+                } catch (err: any) {
+                  toast.error(err.message ?? "Failed to send invoice");
+                }
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Send className="size-4" />
-              Mark as Sent
+              Send to Client
             </Button>
           )}
           <Button

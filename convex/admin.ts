@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 /* ─── Admin email(s) — only these accounts can access the admin dashboard ─── */
 const ADMIN_EMAILS = ["promonexusllc@gmail.com"];
@@ -169,6 +170,15 @@ export const createClient = mutation({
       title: `Client ${args.name} created`,
       description: `Assigned ID: ${clientId}`,
     });
+
+    // Schedule onboarding: create portal account + send welcome email
+    await ctx.scheduler.runAfter(0, internal.clientActions.onboardClient, {
+      clientDbId: id as string,
+      clientId,
+      name: args.name,
+      email: args.email,
+    });
+
     return { id, clientId };
   },
 });
@@ -564,5 +574,37 @@ export const getUnreadMessageCount = query({
       .withIndex("by_read", (q) => q.eq("read", false))
       .collect();
     return messages.length;
+  },
+});
+
+/* ─── Send Invoice to Client ─── */
+export const sendInvoice = mutation({
+  args: { id: v.id("invoices") },
+  handler: async (ctx, { id }) => {
+    const { userId } = await requireAdmin(ctx);
+    const invoice = await ctx.db.get(id);
+    if (!invoice) throw new Error("Invoice not found");
+    if (invoice.status !== "draft") {
+      throw new Error("Only draft invoices can be sent");
+    }
+
+    // Update status to sent
+    await ctx.db.patch(id, { status: "sent" });
+
+    // Log activity
+    await ctx.db.insert("activityLog", {
+      clientId: invoice.clientId,
+      userId,
+      type: "invoice_sent",
+      title: `Invoice ${invoice.quoteNumber} sent`,
+      description: `Total: $${(invoice.total / 100).toFixed(2)}`,
+    });
+
+    // Schedule email delivery
+    await ctx.scheduler.runAfter(0, internal.clientActions.sendInvoiceEmail, {
+      invoiceId: id as string,
+    });
+
+    return { success: true };
   },
 });

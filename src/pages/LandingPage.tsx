@@ -172,10 +172,10 @@ export function LandingPage() {
   return (
     <div className="relative">
       {/* ═══ HERO ═══ */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden grid-bg">
+      <section className="relative min-h-[92svh] flex items-center overflow-hidden grid-bg">
         {/* Ambient glow orbs */}
-        <div className="absolute top-1/4 -left-40 w-96 h-96 bg-[#00b4ff] rounded-full opacity-[0.04] blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-[#6366f1] rounded-full opacity-[0.04] blur-[120px]" />
+        <div className="glow-orb-mobile-hide absolute top-1/4 -left-40 w-96 h-96 bg-[#00b4ff] rounded-full opacity-[0.04] blur-[120px]" />
+        <div className="glow-orb-mobile-hide absolute bottom-1/4 -right-40 w-96 h-96 bg-[#6366f1] rounded-full opacity-[0.04] blur-[120px]" />
 
         {/* Background hero image — contained to right side, blended */}
         <div
@@ -261,7 +261,7 @@ export function LandingPage() {
 
       {/* ═══ SERVICES ═══ */}
       <section id="services" className="py-24 relative">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#00b4ff] rounded-full opacity-[0.02] blur-[100px]" />
+        <div className="glow-orb-mobile-hide absolute top-0 right-0 w-80 h-80 bg-[#00b4ff] rounded-full opacity-[0.02] blur-[100px]" />
         <div className="container relative z-10">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
@@ -301,7 +301,7 @@ export function LandingPage() {
 
       {/* ═══ PORTFOLIO ═══ */}
       <section id="portfolio" className="py-24 relative bg-[#050d1a]/50">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#6366f1] rounded-full opacity-[0.02] blur-[150px]" />
+        <div className="glow-orb-mobile-hide absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#6366f1] rounded-full opacity-[0.02] blur-[150px]" />
         <div className="container relative z-10">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00b4ff20] bg-[#00b4ff08] text-xs text-[#00b4ff] mb-4">
@@ -323,7 +323,7 @@ export function LandingPage() {
                 key={item.name}
                 className="group rounded-xl glow-border bg-gradient-to-br from-[#0a1628] to-[#0a1628]/60 backdrop-blur-sm relative overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00b4ff] rounded-full opacity-[0.03] blur-[80px] group-hover:opacity-[0.06] transition-opacity" />
+                <div className="glow-orb-mobile-hide absolute top-0 right-0 w-64 h-64 bg-[#00b4ff] rounded-full opacity-[0.03] blur-[80px] group-hover:opacity-[0.06] transition-opacity" />
                 <div className="relative z-10 flex flex-col lg:flex-row gap-0">
                   <div className="lg:w-3/5 overflow-hidden">
                     <img
@@ -445,7 +445,7 @@ export function LandingPage() {
 
       {/* ═══ CONTACT ═══ */}
       <section id="contact" className="py-24 relative bg-[#050d1a]/50">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#00b4ff] rounded-full opacity-[0.02] blur-[150px]" />
+        <div className="glow-orb-mobile-hide absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#00b4ff] rounded-full opacity-[0.02] blur-[150px]" />
         <div className="container relative z-10">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
