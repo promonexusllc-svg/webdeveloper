@@ -188,7 +188,7 @@ export function LandingPage() {
             WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.5) 80%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 75%, transparent 100%)",
             maskComposite: "intersect",
             WebkitMaskComposite: "source-in",
-            opacity: 0.85,
+            opacity: 0.75,
           }}
         />
 
@@ -567,20 +567,24 @@ export function LandingPage() {
       {/* ═══ PAYMENT METHODS ═══ */}
       <section className="py-10 border-t border-[#1e293b] bg-[#050d1a]/40">
         <div className="container">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-sm">
+          <div className="flex flex-col items-center gap-5">
             <span className="text-[#475569] uppercase text-xs tracking-wider font-semibold">Accepted Payments</span>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[#94a3b8]">
-              <span className="flex items-center gap-2">
-                <span className="text-[#00b4ff]">$</span> CashApp: <span className="text-white font-medium">$promonexuswebdesign</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-[#94a3b8]">
+              <span className="flex items-center gap-2.5">
+                <img src="/icons/cashapp.svg" alt="Cash App" className="h-6 w-6" />
+                <span className="text-white font-medium">$promonexuswebdesign</span>
               </span>
-              <span className="flex items-center gap-2">
-                <span className="text-[#00b4ff]">P</span> PayPal: <span className="text-white font-medium">@EricTomchik</span>
+              <span className="flex items-center gap-2.5">
+                <img src="/icons/paypal.svg" alt="PayPal" className="h-6 w-6" />
+                <span className="text-white font-medium">@EricTomchik</span>
               </span>
-              <span className="flex items-center gap-2">
-                <span className="text-[#00b4ff]">V</span> Venmo: <span className="text-white font-medium">@PromoNexusLLC</span>
+              <span className="flex items-center gap-2.5">
+                <img src="/icons/venmo.svg" alt="Venmo" className="h-6 w-6" />
+                <span className="text-white font-medium">@PromoNexusLLC</span>
               </span>
-              <span className="flex items-center gap-2">
-                <span className="text-[#00b4ff]">Z</span> Zelle: <span className="text-white font-medium">(228) 344-5724</span>
+              <span className="flex items-center gap-2.5">
+                <img src="/icons/zelle.svg" alt="Zelle" className="h-6 w-6" />
+                <span className="text-white font-medium">(228) 344-5724</span>
               </span>
             </div>
           </div>
