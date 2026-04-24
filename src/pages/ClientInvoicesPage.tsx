@@ -16,7 +16,6 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
 
 export function ClientInvoicesPage() {
   const invoices = useQuery(api.clientPortal.getMyInvoices);
-  const profile = useQuery(api.clientPortal.getMyProfile);
 
   return (
     <div className="p-6 space-y-8">
